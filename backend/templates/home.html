@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Bus Ticket Booking{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 class="display-4">Book Your Bus Journey</h1>
+    <p class="lead">Search, book, and manage your bus tickets with ease</p>
+</div>
+
+<div class="card mb-5">
+    <div class="card-body">
+        <form action="{{ url_for('search_buses') }}" method="GET">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="from" class="form-label">From</label>
+                    <input type="text" class="form-control" id="from" name="from" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="to" class="form-label">To</label>
+                    <input type="text" class="form-control" id="to" name="to" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="date" class="form-label">Date of Journey</label>
+                    <input type="date" class="form-control" id="date" name="date" required 
+                           min="{{ today }}" value="{{ today }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100">Search Buses</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<h2 class="mb-4">Popular Routes</h2>
+<div class="row">
+    {% for route in popular_routes %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <img src="{{ route.image }}" class="card-img-top" alt="{{ route.from }} to {{ route.to }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ route.from }} to {{ route.to }}</h5>
+                <p class="card-text">Starting from ${{ route.price }}</p>
+                <a href="{{ url_for('search_buses', from=route.from, to=route.to, date=today) }}" 
+                   class="btn btn-outline-primary">Check Availability</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="text-center mb-4">
+            <i class="bi bi-shield-check display-4 text-primary"></i>
+        </div>
+        <h3 class="text-center">Secure Booking</h3>
+        <p class="text-center">Your payments and personal information are always protected</p>
+    </div>
+    <div class="col-md-4">
+        <div class="text-center mb-4">
+            <i class="bi bi-clock-history display-4 text-primary"></i>
+        </div>
+        <h3 class="text-center">24/7 Support</h3>
+        <p class="text-center">Our customer service team is available round the clock</p>
+    </div>
+    <div class="col-md-4">
+        <div class="text-center mb-4">
+            <i class="bi bi-ticket-perforated display-4 text-primary"></i>
+        </div>
+        <h3 class="text-center">Instant Tickets</h3>
+        <p class="text-center">Get your e-tickets immediately after booking</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+{% endblock %} 

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Kaashi Roadlinkers{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Search Results</h2>
+            <p class="text-muted">
+                From: <strong>{{ from_location }}</strong> | 
+                To: <strong>{{ to_location }}</strong> | 
+                Date: <strong>{{ date }}</strong>
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for bus in buses %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{{ bus.image }}" class="img-fluid rounded-start h-100" alt="{{ bus.name }}">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ bus.name }}</h5>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="bi bi-clock"></i> {{ bus.departure_time }} - {{ bus.arrival_time }}<br>
+                                    <i class="bi bi-bus-front"></i> {{ bus.type }}<br>
+                                    <i class="bi bi-people"></i> {{ bus.seats_available }} seats available
+                                </small>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h4 class="text-primary mb-0">₹{{ bus.price }}</h4>
+                                <a href="{{ url_for('bus_details', bus_id=bus.id) }}" class="btn btn-primary">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+{% endblock %} 

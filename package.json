@@ -1,0 +1,12 @@
+{
+  "name": "bus-ticket-booking-system",
+  "version": "1.0.0",
+  "description": "A comprehensive bus ticket booking system with receipt generation and chatbot",
+  "scripts": {
+    "start": "cd frontend && npm start",
+    "install-all": "cd frontend && npm install",
+    "build": "cd frontend && npm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+} 

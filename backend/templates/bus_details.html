@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Bus Details - Kaashi Roadlinkers{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <img src="{{ bus.image }}" class="card-img-top" alt="{{ bus.name }}">
+                <div class="card-body">
+                    <h2 class="card-title">{{ bus.name }}</h2>
+                    <p class="card-text">
+                        <i class="bi bi-bus-front"></i> Type: {{ bus.type }}<br>
+                        <i class="bi bi-clock"></i> Departure: {{ bus.departure_time }}<br>
+                        <i class="bi bi-clock-history"></i> Arrival: {{ bus.arrival_time }}<br>
+                        <i class="bi bi-people"></i> Seats Available: {{ bus.seats_available }}<br>
+                        <i class="bi bi-currency-rupee"></i> Price: ₹{{ bus.price }}
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Seat Layout -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h3 class="card-title">Select Your Seats</h3>
+                    <div class="seat-layout">
+                        <div class="bus-front text-center mb-4">
+                            <i class="bi bi-bus-front fs-1"></i>
+                            <p>Front</p>
+                        </div>
+                        <div class="row g-2" id="seatContainer">
+                            <!-- Seats will be populated by JavaScript -->
+                        </div>
+                        <div class="seat-legend mt-4">
+                            <div class="d-flex justify-content-center gap-4">
+                                <div><i class="bi bi-square text-success"></i> Available</div>
+                                <div><i class="bi bi-square-fill text-success"></i> Selected</div>
+                                <div><i class="bi bi-square-fill text-secondary"></i> Booked</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Book Your Seat</h3>
+                    <form action="{{ url_for('book_bus', bus_id=bus.id) }}" method="POST" id="bookingForm">
+                        <div class="mb-3">
+                            <label class="form-label">Selected Seats</label>
+                            <div id="selectedSeats" class="form-control bg-light"></div>
+                            <input type="hidden" name="seats" id="seatsInput" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Passenger Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Total Amount</label>
+                            <div class="form-control bg-light" id="totalAmount">₹0</div>
+                        </div>
+
+                        <!-- Payment Method Selection -->
+                        <div class="mb-3">
+                            <label class="form-label">Select Payment Method</label>
+                            <div class="list-group">
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-2" type="radio" name="payment_method" value="upi" checked>
+                                    <i class="bi bi-phone"></i> UPI Payment
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-2" type="radio" name="payment_method" value="card">
+                                    <i class="bi bi-credit-card"></i> Credit/Debit Card
+                                </label>
+                                <label class="list-group-item">
+                                    <input class="form-check-input me-2" type="radio" name="payment_method" value="netbanking">
+                                    <i class="bi bi-bank"></i> Net Banking
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" id="bookButton" disabled>
+                            Proceed to Payment
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.seat {
+    width: 40px;
+    height: 40px;
+    margin: 2px;
+    cursor: pointer;
+    border: 2px solid #28a745;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+.seat.selected {
+    background-color: #28a745;
+    color: white;
+}
+.seat.booked {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    cursor: not-allowed;
+}
+.list-group-item {
+    cursor: pointer;
+}
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+</style>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const totalSeats = {{ bus.seats_available }};
+    const seatPrice = {{ bus.price }};
+    const seatContainer = document.getElementById('seatContainer');
+    const selectedSeatsDiv = document.getElementById('selectedSeats');
+    const seatsInput = document.getElementById('seatsInput');
+    const totalAmountDiv = document.getElementById('totalAmount');
+    const bookButton = document.getElementById('bookButton');
+    let selectedSeats = [];
+
+    // Create seat layout
+    for (let i = 1; i <= totalSeats; i++) {
+        const seatDiv = document.createElement('div');
+        seatDiv.className = 'col-auto';
+        seatDiv.innerHTML = `<div class="seat" data-seat="${i}">${i}</div>`;
+        seatContainer.appendChild(seatDiv);
+
+        seatDiv.querySelector('.seat').addEventListener('click', function() {
+            const seatNum = this.dataset.seat;
+            if (this.classList.contains('selected')) {
+                this.classList.remove('selected');
+                selectedSeats = selectedSeats.filter(s => s !== seatNum);
+            } else {
+                this.classList.add('selected');
+                selectedSeats.push(seatNum);
+            }
+            
+            // Update display
+            selectedSeatsDiv.textContent = selectedSeats.join(', ');
+            seatsInput.value = selectedSeats.length;
+            totalAmountDiv.textContent = `₹${selectedSeats.length * seatPrice}`;
+            bookButton.disabled = selectedSeats.length === 0;
+        });
+    }
+});
+</script>
+{% endblock %}
+{% endblock %} 

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Receipt - Kaashi Roadlinkers{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body" id="receipt">
+            <div class="text-center mb-4">
+                <h1 class="display-6">Kaashi Roadlinkers</h1>
+                <p class="text-muted">Your Trusted Travel Partner</p>
+                <h2>Booking Receipt</h2>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Booking Details</h5>
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>Booking Reference:</strong></td>
+                            <td>{{ booking.booking_ref }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Booking Date:</strong></td>
+                            <td>{{ booking.booking_date }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Travel Date:</strong></td>
+                            <td>{{ booking.travel_date }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h5>Bus Details</h5>
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>Bus Name:</strong></td>
+                            <td>{{ bus.name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bus Type:</strong></td>
+                            <td>{{ bus.type }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Departure:</strong></td>
+                            <td>{{ booking.departure_time }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Arrival:</strong></td>
+                            <td>{{ booking.arrival_time }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h5>Passenger Details</h5>
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>Name:</strong></td>
+                            <td>{{ booking.passenger_name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email:</strong></td>
+                            <td>{{ booking.email }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phone:</strong></td>
+                            <td>{{ booking.phone }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Number of Seats:</strong></td>
+                            <td>{{ booking.seats }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h5>Payment Details</h5>
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>Price per Seat:</strong></td>
+                            <td>₹{{ bus.price }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Amount:</strong></td>
+                            <td>₹{{ booking.total_amount }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Method:</strong></td>
+                            <td>{{ booking.payment_method|title }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Status:</strong></td>
+                            <td><span class="badge bg-success">PAID</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="border-top pt-4 mt-4">
+                <p class="text-center mb-0">
+                    <small class="text-muted">
+                        Thank you for choosing Kaashi Roadlinkers. For any assistance, please contact us at support@kaashiroadlinkers.com
+                    </small>
+                </p>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <button class="btn btn-primary me-2" onclick="window.print()">
+                <i class="bi bi-printer"></i> Print Receipt
+            </button>
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">
+                <i class="bi bi-house"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .card-footer, nav {
+            display: none !important;
+        }
+        #receipt {
+            border: none !important;
+        }
+    }
+</style>
+{% endblock %} 
